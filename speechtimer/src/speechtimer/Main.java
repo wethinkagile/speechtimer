@@ -15,11 +15,14 @@ public class Main {
     }
    
     public static void main(String[] args) {
+        // Run Graphical User Interface
         UIManager.put("swing.boldMetal", Boolean.FALSE);
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 createAndShowGUI();
             }
         });
+        // Run Program Logic
+        Logic lc = new Logic();
     }
 }

@@ -18,8 +18,10 @@ public class WindowContainer extends JFrame {
     private JMenuItem exitMenu;
 
     // vars for countdown
-    private JLabel countdownLabelClock;
+    static JLabel countdownLabelClockMin;
     private JLabel countdownLabelMin;
+    static JLabel countdownLabelClockSec;
+    private JLabel countdownLabelSec;
 
     // Start Stop Buttons
     private JButton startButton;
@@ -62,13 +64,23 @@ public class WindowContainer extends JFrame {
         aboutMenu.addActionListener(new MenuSelection(2));
         
         // Timer Clock
-        countdownLabelClock = new JLabel("60");
+        // Minutes
+        countdownLabelClockMin = new JLabel("60");
         countdownLabelMin = new JLabel("min");
-        countdownLabelClock.setFont(new Font("Sans Serif", Font.BOLD, 52));
-        content.add(countdownLabelClock);
+        countdownLabelClockMin.setFont(new Font("Sans Serif", Font.BOLD, 52));
+        content.add(countdownLabelClockMin);
         content.add(countdownLabelMin);
-        countdownLabelClock.setBounds(30,15,80,100);
-        countdownLabelMin.setBounds(95,28,80,100);
+        countdownLabelClockMin.setBounds(30,15,80,100);
+        countdownLabelMin.setBounds(110,28,80,100);
+
+        // Seconds
+        countdownLabelClockSec = new JLabel("60");
+        countdownLabelSec = new JLabel("sec");
+        countdownLabelClockSec.setFont(new Font("Sans Serif", Font.BOLD, 32));
+        content.add(countdownLabelClockSec);
+        content.add(countdownLabelSec);
+        countdownLabelClockSec.setBounds(140,23,80,100);
+        countdownLabelSec.setBounds(190,28,80,100);
         
         // StartStop Buttons
         startButton = new JButton("Start");
@@ -96,7 +108,7 @@ public class WindowContainer extends JFrame {
         nextTalker.setBounds(30,260,285,40);
 
 	// Load Speaker List
-        browseToFileField = new JTextField("excel file with path");
+        browseToFileField = new JTextField("Path to txt file with speakerlist");
         content.add(browseToFileField);
 	browseToFileField.setBounds(30,500,250,30);
 		
