@@ -1,9 +1,10 @@
 package speechtimer;
 
 
-import java.awt.*;
+//import java.awt.*;
+//import javax.swing.*;
+
 import java.awt.event.*;
-import javax.swing.*;
 import javax.swing.Timer; // not java.util.Timer
 
 
@@ -18,29 +19,31 @@ public class Countdown {
     //vars
     private int seconds = 60;
     private int minutes = 60;
-    private javax.swing.Timer mainCountDown;
+    static Timer mainCountDown;
 
     //constructor
     public Countdown () {
-        mainCountDown = new javax.swing.Timer(1000, new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-              
-              if (seconds <= 0) {
-                   minutes--;
-                   seconds = 60;
-              }
-              
-              System.out.println(minutes + ":" + seconds + "min");
-              seconds--;
-              WindowContainer.countdownLabelClockMin.setText(Integer.toString(minutes));
-              WindowContainer.countdownLabelClockSec.setText(Integer.toString(seconds));
+        mainCountDown = new Timer(1000, null);
+        mainCountDown.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                  if (seconds <= 0) {
+                       minutes--;
+                       seconds = 60;
+                  }
+
+                  System.out.println(minutes + ":" + seconds + "min");
+                  seconds--;
+                  WindowContainer.countdownLabelClockMin.setText(Integer.toString(minutes));
+                  WindowContainer.countdownLabelClockSec.setText(Integer.toString(seconds));
           }
        });
     }
 
-    public void startMainCountDown () {
+    public static void startMainCountDown () {
         mainCountDown.start();
     }
 
-
+    public static void stopMainCountDown () {
+        mainCountDown.stop();
+    }
 }

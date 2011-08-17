@@ -22,7 +22,5 @@ public class Main {
                 createAndShowGUI();
             }
         });
-        // Run Program Logic
-        Logic lc = new Logic();
     }
 }

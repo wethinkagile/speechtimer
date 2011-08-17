@@ -1,9 +1,8 @@
 package speechtimer;
 
 import javax.swing.*;
-
-import java.util.Timer;
 import java.awt.Font;
+// import java.util.Timer;
 
 /**
  *
@@ -33,11 +32,12 @@ public class WindowContainer extends JFrame {
     private JLabel nextTalker;
     
     // instance variables to load speaker list
-    private JTextField browseToFileField;
+    static JTextField browseToFileField;
     private JButton browseToFileButton;
     
     // vars for list
-    private JTextField speakerList;
+    static JTextArea speakerList;
+    private JScrollPane scrollPane;
     
     JPanel content = new JPanel();
 
@@ -117,16 +117,33 @@ public class WindowContainer extends JFrame {
         browseToFileButton.setBounds(300,500,85,30);
 		
 	// The List
-        speakerList = new JTextField();
+        speakerList = new JTextArea();
         content.add(speakerList);
         speakerList.setBounds(470,40,260,490);
-        // speakerList.setCaretPosition();
-        /*
-         *  static JTextArea area = new JTextArea(5, 20);
-         * private JScrollPane scrollPane = new JScrollPane(area);
-         * private JLabel scrollPaneLabel = new JLabel("Program Output");
-         * WindowContainer.area.append(bash_str + newline);
-         * WindowContainer.area.setCaretPosition(WindowContainer.area.getDocument().getLength());
-         */
+        // scrollPane = new JScrollPane (speakerList);
+
+        // *************** LOGIC *************
+
+        // Event listeners for Buttons
+        startButton.addActionListener(new ButtonPressed("start", content));
+        stopButton.addActionListener(new ButtonPressed("stop", content));
+
+        // If Stop is clicked save name/time pair in arraylist
+
+        browseToFileButton.addActionListener(new ButtonPressed("browse", content));
+        
+
+        // 1) If Speaker names are clicked on preview pane, create new countdown instance,
+        // 2) also check if speaker is alrdy in array with previous used time
+
+        // Load Txt File into Textbox
+
+        // 1) If name in txt file is clicked display change names in preview pane AND create new cd instance
+        // 2) also check if speaker is alrdy in array with previous used time
+
+        // If new speaker is selected, store speaker and time in array
+
+        
+
 	}
 }
