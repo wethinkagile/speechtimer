@@ -1,8 +1,13 @@
 package speechtimer;
 
 import javax.swing.*;
-import java.awt.Font;
-// import java.util.Timer;
+import java.awt.*;
+import java.util.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 
 /**
  *
@@ -10,7 +15,7 @@ import java.awt.Font;
  */
 public class WindowContainer extends JFrame {
 
-	// Top Menu
+    // Top Menu
     private JMenuBar bar;
     private JMenu fileMenu;
     private JMenuItem aboutMenu;
@@ -25,19 +30,26 @@ public class WindowContainer extends JFrame {
     // Start Stop Buttons
     private JButton startButton;
     private JButton stopButton;
+    static JLabel errorHandlingLabel;
 
-    // Imminent Talkers
-    private JLabel previousTalker;
-    private JLabel currentTalker;
-    private JLabel nextTalker;
+    // Speaker Index/Time Storage
+    static ArrayList speakerIndexMin = new ArrayList();
+    static ArrayList speakerIndexSec = new ArrayList();
+    static int selectedIndex;
+
+    // Speakers
+    private JLabel currentTalker;    
     
     // instance variables to load speaker list
     static JTextField browseToFileField;
     private JButton browseToFileButton;
     
     // vars for list
-    static JTextArea speakerList;
-    private JScrollPane scrollPane;
+    static DefaultListModel listModel;
+    private JList speakerList;
+    private JScrollPane listScroller;
+    private javax.swing.Timer errorLabelTimer;
+    private boolean labelFadeTimer = false;
     
     JPanel content = new JPanel();
 
@@ -70,8 +82,8 @@ public class WindowContainer extends JFrame {
         countdownLabelClockMin.setFont(new Font("Sans Serif", Font.BOLD, 52));
         content.add(countdownLabelClockMin);
         content.add(countdownLabelMin);
-        countdownLabelClockMin.setBounds(30,15,80,100);
-        countdownLabelMin.setBounds(110,28,80,100);
+        countdownLabelClockMin.setBounds(30,185,80,100);
+        countdownLabelMin.setBounds(110,198,80,100);
 
         // Seconds
         countdownLabelClockSec = new JLabel("60");
@@ -79,34 +91,27 @@ public class WindowContainer extends JFrame {
         countdownLabelClockSec.setFont(new Font("Sans Serif", Font.BOLD, 32));
         content.add(countdownLabelClockSec);
         content.add(countdownLabelSec);
-        countdownLabelClockSec.setBounds(140,23,80,100);
-        countdownLabelSec.setBounds(190,28,80,100);
+        countdownLabelClockSec.setBounds(140,193,80,100);
+        countdownLabelSec.setBounds(190,198,80,100);
         
         // StartStop Buttons
-        startButton = new JButton("Start");
-        stopButton = new JButton("Stop");
+        startButton = new JButton("START");
+        stopButton = new JButton("STOP");
+        errorHandlingLabel = new JLabel("");
         content.add(startButton);
         content.add(stopButton);
-        startButton.setBounds(30,130,85,30);
-        stopButton.setBounds(130,130,85,30);
-        
-        // Imminient Talkers
-        previousTalker = new JLabel("Dr. Hinz");
-        currentTalker = new JLabel("Prof. Kunz");
-        nextTalker = new JLabel("Mustermann (AIP)");
-        
-        content.add(previousTalker);
-        content.add(currentTalker);
-        content.add(nextTalker);
-        
-        previousTalker.setFont(new Font("Sans Serif", Font.BOLD, 22));
-        currentTalker.setFont(new Font("Sans Serif", Font.BOLD, 44));
-        nextTalker.setFont(new Font("Sans Serif", Font.BOLD, 22));
-           
-        previousTalker.setBounds(30,180,285,40);
-        currentTalker.setBounds(30,220,285,40);
-        nextTalker.setBounds(30,260,285,40);
+        content.add(errorHandlingLabel);
+        startButton.setBounds(30,425,85,30);
+        stopButton.setBounds(130,425,85,30);
+        errorHandlingLabel.setBounds(30,455,285,30);
+        errorHandlingLabel.setForeground(Color.red);
 
+        // Current Talker
+        currentTalker = new JLabel("Prof. Kunz");
+        content.add(currentTalker);
+        currentTalker.setFont(new Font("Sans Serif", Font.BOLD, 44));
+        currentTalker.setBounds(30,35,550,50);
+       
 	// Load Speaker List
         browseToFileField = new JTextField("Path to txt file with speakerlist");
         content.add(browseToFileField);
@@ -117,33 +122,91 @@ public class WindowContainer extends JFrame {
         browseToFileButton.setBounds(300,500,85,30);
 		
 	// The List
-        speakerList = new JTextArea();
-        content.add(speakerList);
-        speakerList.setBounds(470,40,260,490);
-        // scrollPane = new JScrollPane (speakerList);
+        listModel = new DefaultListModel();
+        listModel.addElement("John Doe");
+
+        speakerList = new JList(listModel);
+        speakerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        speakerList.setLayoutOrientation(JList.VERTICAL_WRAP);
+        speakerList.setVisibleRowCount(-1);
+        
+        listScroller = new JScrollPane(speakerList);
+        listScroller.setPreferredSize(new Dimension(260, 80));
+        listScroller.setBounds(590,40,175,490);
+        listScroller.setAlignmentX(LEFT_ALIGNMENT);
+        
+        content.add(listScroller);
+        
 
         // *************** LOGIC *************
+
+        // Initialise SpeakerList Arraylist
+        speakerIndexMin.add("15");
+        speakerIndexSec.add("59");
+        selectedIndex = 0;
 
         // Event listeners for Buttons
         startButton.addActionListener(new ButtonPressed("start", content));
         stopButton.addActionListener(new ButtonPressed("stop", content));
-
-        // If Stop is clicked save name/time pair in arraylist
-
         browseToFileButton.addActionListener(new ButtonPressed("browse", content));
         
+        ListSelectionListener listSelectionListener = new ListSelectionListener() {
+              public void valueChanged(ListSelectionEvent listSelectionEvent) {
 
-        // 1) If Speaker names are clicked on preview pane, create new countdown instance,
-        // 2) also check if speaker is alrdy in array with previous used time
+                if (!ButtonPressed.countdownRunning) {
 
-        // Load Txt File into Textbox
+                    boolean adjust = listSelectionEvent.getValueIsAdjusting();
+                    System.out.println(", Adjusting? " + adjust);
+                    if (!adjust) {
+                          JList list = (JList) listSelectionEvent.getSource();
+                          int selections[] = list.getSelectedIndices();
+                          Object selectedValues[] = list.getSelectedValues();
 
-        // 1) If name in txt file is clicked display change names in preview pane AND create new cd instance
-        // 2) also check if speaker is alrdy in array with previous used time
+                          // debugging
+                          for (int i = 0, n = selections.length; i < n; i++) {
+                                if (i == 0) {
+                                  System.out.println("  Selections: ");
+                                }
+                                System.out.println(selections[i] + "/" + selectedValues[i] + " ");
 
-        // If new speaker is selected, store speaker and time in array
+                                // Changing GUI
+                                String selectedValue = list.getSelectedValue().toString();
+                                currentTalker.setText(selectedValue);
 
-        
+                                // Reading the selected Index and its time from the Arraylist speakerIndex
+                                selectedIndex = list.getSelectedIndex();
 
-	}
+                                // Loading the time into the GUI
+                                WindowContainer.countdownLabelClockMin.setText(speakerIndexMin.get(selectedIndex).toString());
+                                WindowContainer.countdownLabelClockSec.setText(speakerIndexSec.get(selectedIndex).toString());
+                                // debugging
+                                // System.out.println(selectedIndex);
+                          }
+                    }
+                }
+
+                // UI Feedback / Usability
+
+                else {
+                    Color customColor = new Color(178,34,34);
+                    WindowContainer.errorHandlingLabel.setForeground(customColor);
+                    WindowContainer.errorHandlingLabel.setText("Please stop the timer first.");
+
+                    if (!labelFadeTimer) {
+                        // let the error message disappear again
+                        errorLabelTimer = new javax.swing.Timer(2500, null);
+                        errorLabelTimer.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                 errorHandlingLabel.setText("");
+                                 errorLabelTimer.stop();
+                                 labelFadeTimer = false;
+                          }
+                       });
+                       errorLabelTimer.start();
+                       labelFadeTimer = true;
+                    }
+                }
+            }
+        };speakerList.addListSelectionListener(listSelectionListener);
+    }
 }

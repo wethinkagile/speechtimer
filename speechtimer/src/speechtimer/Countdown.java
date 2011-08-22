@@ -17,18 +17,27 @@ import javax.swing.Timer; // not java.util.Timer
 public class Countdown {
 
     //vars
-    private int seconds = 60;
-    private int minutes = 60;
+    private int seconds;
+    private int minutes;
     static Timer mainCountDown;
+    
 
     //constructor
     public Countdown () {
+        
+        // cast current time object from array list to integer
+        String minutesObjToString = WindowContainer.speakerIndexMin.get(WindowContainer.selectedIndex).toString();
+        String secondsObjToString = WindowContainer.speakerIndexSec.get(WindowContainer.selectedIndex).toString();
+        minutes = Integer.parseInt(minutesObjToString);
+        seconds = Integer.parseInt(secondsObjToString);
+
+        // countdown logic
         mainCountDown = new Timer(1000, null);
         mainCountDown.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                   if (seconds <= 0) {
                        minutes--;
-                       seconds = 60;
+                       seconds = 59;
                   }
 
                   System.out.println(minutes + ":" + seconds + "min");
