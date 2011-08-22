@@ -1,15 +1,13 @@
-Current Version is beta 0.1
+Current Version is 0.9
 
 ==ABOUT==
 
-I wrote this tool for monks.de to manage speak times of participants of medical (or any other) conferences.
-
-In the final release it should be possible to load speakers from a txt list.
+I wrote this tool for monks.de to manage speak times of participants of medical (or any other) conferences. 
 
 ==INSTALLATION==
 
 1) Make sure you have Java installed on your OS.
-2) To install you just have to compile the tool as I will not provide a build for well known security reasons. So compile and take the jar file out of the dist folder and put it some place convenient for you.
+2) To install you just have to compile the tool as I will not provide a build for well known security reasons. So compile and take the jar file out of the dist folder and put it some place convenient for you or run directly from that folder.
 
 ==RUN==
 
@@ -18,11 +16,21 @@ Run with
 
 ==TROUBLESHOOTING==
 
- 
+This tool was tested on RedHat/Fedora FC15  Linux with a 2.8 Kernel.
+I am not responsible for problems that result from the usage of this program (although you should be fine).
 
 ==ROADMAP==
 
-ANY HELP OR SUGGESTION IS WELCOME
+Upcoming in Version 1.0
+- Dynamic Timings via UI
+- Fix of last item persistence in speaker arraylist
+
+Upcoming in Version 1.1
+- Better looking Interace
+- Reset functionality
+- Sound Feedback
+- More Error Handling
+- Code cleanup
 
 Email: nottinhill-asperand-ecomail-point-at
 
