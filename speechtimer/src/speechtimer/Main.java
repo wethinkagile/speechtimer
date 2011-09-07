@@ -10,7 +10,7 @@ import javax.swing.*;
 public class Main {
 
     private static void createAndShowGUI() {
-        WindowContainer wc = new WindowContainer();
+        WindowContainer wc = new WindowContainer(15);
         wc.setVisible(true);
     }
    

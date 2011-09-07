@@ -1,4 +1,4 @@
-Current Version is 0.9
+Current Version is 1.0
 
 ==ABOUT==
 
@@ -7,7 +7,7 @@ I wrote this tool for monks.de to manage speak times of participants of medical 
 ==INSTALLATION==
 
 1) Make sure you have Java installed on your OS.
-2) To install you just have to compile the tool as I will not provide a build for well known security reasons. So compile and take the jar file out of the dist folder and put it some place convenient for you or run directly from that folder.
+2) To install you just have to compile the tool with your favorite Java IDE. So compile and take the jar file out of the dist folder and put it some place convenient for you or run directly from that folder.
 
 ==RUN==
 
@@ -16,25 +16,25 @@ Run with
 
 ==TROUBLESHOOTING==
 
-This tool was tested on RedHat/Fedora FC15  Linux with a 2.8 Kernel.
-I am not responsible for problems that result from the usage of this program (although you should be fine).
+This tool was tested on RedHat/Fedora FC15 Linux with a 2.8 Kernel and on Microsoft Windows 7 with JDK 1.6.
+I am not responsible for problems that result from the usage of this program.
 
-==ROADMAP==
+==CHANGES IN THIS VERSION ==
 
-Upcoming in Version 1.0
-- Dynamic Timings via UI
+- Implemented dynamic Timings via UI, for single or all speakers
 - Fix of last item persistence in speaker arraylist
+- Add and remove Speaker via Gui
+- Error handling and user feedback
+- Hide or Show Clock to not intimidate speakers
 
 Upcoming in Version 1.1
 - Better looking Interace
-- Reset functionality
 - Sound Feedback
-- More Error Handling
-- Code cleanup
+
+== AUTHOR ==
 
 Email: nottinhill-asperand-ecomail-point-at
 
 ==DONATIONS==
 
-To show your appreciation for this little tool please send some Bitcoins to 18QeVng1ArbTBoyFTXGwk78caQgDESUC4v
-Thanks!
+To show your appreciation for this little tool please send some Bitcoins to 18QeVng1ArbTBoyFTXGwk78caQgDESUC4v or recommend monks.de, the company that funded the development.

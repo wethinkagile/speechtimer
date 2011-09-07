@@ -7,7 +7,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.io.*;
+import java.net.*;
 
 /**
  *
@@ -23,9 +24,9 @@ public class WindowContainer extends JFrame {
 
     // vars for countdown
     static JLabel countdownLabelClockMin;
-    private JLabel countdownLabelMin;
+    static JLabel countdownLabelMin;
     static JLabel countdownLabelClockSec;
-    private JLabel countdownLabelSec;
+    static JLabel countdownLabelSec;
 
     // Start Stop Buttons
     private JButton startButton;
@@ -33,12 +34,12 @@ public class WindowContainer extends JFrame {
     static JLabel errorHandlingLabel;
 
     // Speaker Index/Time Storage
-    static ArrayList speakerIndexMin = new ArrayList();
-    static ArrayList speakerIndexSec = new ArrayList();
+    static ArrayList<Integer> speakerIndexMin = new ArrayList<Integer>();
+    static ArrayList<Integer> speakerIndexSec = new ArrayList<Integer>();
     static int selectedIndex;
 
     // Speakers
-    private JLabel currentTalker;    
+    static JLabel currentTalker;    
     
     // instance variables to load speaker list
     static JTextField browseToFileField;
@@ -51,13 +52,31 @@ public class WindowContainer extends JFrame {
     private javax.swing.Timer errorLabelTimer;
     private boolean labelFadeTimer = false;
     
+    static int selections[];
+    static Object selectedValues[];
+    
+    // add/remove speakers
+    static JTextField addRemoveSpeakerField;
+    static JLabel addRemoveSpeakerFieldErrorLabel;
+    private JButton addRemoveSpeakerFieldPlus;
+    private JButton addRemoveSpeakerFieldMinus;
+    
+    // edit speechtime
+    static JTextField editSpeechTimeField;
+    private JButton editSpeechTimeButton;
+    static JButton showHideClock;
+    private static int timevalue;
+    static JLabel errorHandlingLabelRight;
+    static JCheckBox editSpeechCheckBox;
+    
+    // THE GUI base
     JPanel content = new JPanel();
 
     //constructor
-    public WindowContainer () {
+    public WindowContainer (int timevalue) {
         // PANEL Layout
         setSize(800,620);
-        setTitle("SpeakClock 0.1 beta");
+        setTitle("Speechtimer 1.0 (by monks.de)");
         setLocation(150,100);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         content.setLayout(null);
@@ -77,7 +96,8 @@ public class WindowContainer extends JFrame {
         
         // Timer Clock
         // Minutes
-        countdownLabelClockMin = new JLabel("60");
+        countdownLabelClockMin = new JLabel();
+        countdownLabelClockMin.setText(Integer.toString(timevalue));
         countdownLabelMin = new JLabel("min");
         countdownLabelClockMin.setFont(new Font("Sans Serif", Font.BOLD, 52));
         content.add(countdownLabelClockMin);
@@ -86,7 +106,7 @@ public class WindowContainer extends JFrame {
         countdownLabelMin.setBounds(110,198,80,100);
 
         // Seconds
-        countdownLabelClockSec = new JLabel("60");
+        countdownLabelClockSec = new JLabel("0");
         countdownLabelSec = new JLabel("sec");
         countdownLabelClockSec.setFont(new Font("Sans Serif", Font.BOLD, 32));
         content.add(countdownLabelClockSec);
@@ -115,11 +135,11 @@ public class WindowContainer extends JFrame {
 	// Load Speaker List
         browseToFileField = new JTextField("Path to txt file with speakerlist");
         content.add(browseToFileField);
-	browseToFileField.setBounds(30,500,250,30);
+	browseToFileField.setBounds(30,500,205,30);
 		
 	browseToFileButton = new JButton("Browse");
         content.add(browseToFileButton);
-        browseToFileButton.setBounds(300,500,85,30);
+        browseToFileButton.setBounds(248,500,85,30);
 		
 	// The List
         listModel = new DefaultListModel();
@@ -132,23 +152,69 @@ public class WindowContainer extends JFrame {
         
         listScroller = new JScrollPane(speakerList);
         listScroller.setPreferredSize(new Dimension(260, 80));
-        listScroller.setBounds(590,40,175,490);
+        listScroller.setBounds(590,40,175,416);
         listScroller.setAlignmentX(LEFT_ALIGNMENT);
         
+        // add/remove speakers    
+        addRemoveSpeakerField = new JTextField("Add a speaker");
+        addRemoveSpeakerFieldErrorLabel = new JLabel();
+        
+        addRemoveSpeakerFieldPlus = new JButton();
+        addRemoveSpeakerFieldPlus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/speechtimer/resources/plus.png")));
+        
+        addRemoveSpeakerFieldMinus = new JButton();
+        addRemoveSpeakerFieldMinus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/speechtimer/resources/minus.png")));
+        
+        addRemoveSpeakerField.setBounds(590,484,119,26);
+        addRemoveSpeakerFieldErrorLabel.setBounds(590,458,160,26);
+        addRemoveSpeakerFieldPlus.setBounds(714,484,25,25);
+        addRemoveSpeakerFieldMinus.setBounds(742,484,25,25);
+        
+        content.add(addRemoveSpeakerField);
+        content.add(addRemoveSpeakerFieldErrorLabel);
+        content.add(addRemoveSpeakerFieldPlus);
+        content.add(addRemoveSpeakerFieldMinus);
+        
+        // edit speech time
+        editSpeechTimeField = new JTextField(timevalue);
+        content.add(editSpeechTimeField);
+	editSpeechTimeField.setBounds(375,425,75,30);
+		
+	editSpeechTimeButton = new JButton("Set Time");
+        content.add(editSpeechTimeButton);
+        editSpeechTimeButton.setBounds(470,425,95,30);
+        
+        errorHandlingLabelRight = new JLabel("");
+        content.add(errorHandlingLabelRight);
+        errorHandlingLabelRight.setBounds(375,455,285,30);
+        errorHandlingLabelRight.setForeground(Color.red);
+        
+        editSpeechCheckBox = new JCheckBox("Change all");
+        content.add(editSpeechCheckBox);
+        editSpeechCheckBox.setBounds(371,475,85,30);
+        
+        showHideClock = new JButton("Hide/Show");
+        content.add(showHideClock);
+        showHideClock.setBounds(470,225,95,30);
+                
         content.add(listScroller);
         
 
         // *************** LOGIC *************
 
         // Initialise SpeakerList Arraylist
-        speakerIndexMin.add("15");
-        speakerIndexSec.add("59");
+        speakerIndexMin.add(timevalue);
+        speakerIndexSec.add(0);
         selectedIndex = 0;
 
         // Event listeners for Buttons
         startButton.addActionListener(new ButtonPressed("start", content));
         stopButton.addActionListener(new ButtonPressed("stop", content));
         browseToFileButton.addActionListener(new ButtonPressed("browse", content));
+        editSpeechTimeButton.addActionListener(new ButtonPressed("setTime", content));
+        showHideClock.addActionListener(new ButtonPressed("toggleClock", content));
+        addRemoveSpeakerFieldPlus.addActionListener(new ButtonPressed("addSpeaker", content));
+        addRemoveSpeakerFieldMinus.addActionListener(new ButtonPressed("removeSpeaker", content)); 
         
         ListSelectionListener listSelectionListener = new ListSelectionListener() {
               public void valueChanged(ListSelectionEvent listSelectionEvent) {
@@ -159,8 +225,8 @@ public class WindowContainer extends JFrame {
                     System.out.println(", Adjusting? " + adjust);
                     if (!adjust) {
                           JList list = (JList) listSelectionEvent.getSource();
-                          int selections[] = list.getSelectedIndices();
-                          Object selectedValues[] = list.getSelectedValues();
+                          selections = list.getSelectedIndices();
+                          selectedValues = list.getSelectedValues();
 
                           // debugging
                           for (int i = 0, n = selections.length; i < n; i++) {
@@ -172,8 +238,8 @@ public class WindowContainer extends JFrame {
                                 // Changing GUI
                                 String selectedValue = list.getSelectedValue().toString();
                                 currentTalker.setText(selectedValue);
+                                addRemoveSpeakerField.setText(selectedValue);
 
-                                // Reading the selected Index and its time from the Arraylist speakerIndex
                                 selectedIndex = list.getSelectedIndex();
 
                                 // Loading the time into the GUI
@@ -208,5 +274,5 @@ public class WindowContainer extends JFrame {
                 }
             }
         };speakerList.addListSelectionListener(listSelectionListener);
-    }
+    }           
 }

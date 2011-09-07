@@ -1,26 +1,17 @@
 package speechtimer;
 
-
-//import java.awt.*;
-//import javax.swing.*;
-
 import java.awt.event.*;
-import javax.swing.Timer; // not java.util.Timer
+import javax.swing.Timer; // not java.util.Timer for thread safety
+import java.awt.Color;
+import java.util.*;
 
-
-/**
-* An applet that counts down from a specified time. When it reaches 00:00,
-* it optionally plays a sound and optionally moves the browser to a new page.
-* Place the mouse over the applet to pause the count; move it off to resume.
-* This class demonstrates most applet methods and features.
-**/
 public class Countdown {
 
     //vars
     private int seconds;
     private int minutes;
-    static Timer mainCountDown;
-    
+    static javax.swing.Timer mainCountDown;
+    private Timer errorLabelTimer;
 
     //constructor
     public Countdown () {
@@ -32,19 +23,42 @@ public class Countdown {
         seconds = Integer.parseInt(secondsObjToString);
 
         // countdown logic
-        mainCountDown = new Timer(1000, null);
+        mainCountDown = new javax.swing.Timer(1000, null);
         mainCountDown.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                  if (seconds <= 0) {
-                       minutes--;
-                       seconds = 59;
-                  }
+               // see weather we got minutes left
+                if (minutes > -1) {
 
-                  System.out.println(minutes + ":" + seconds + "min");
-                  seconds--;
-                  WindowContainer.countdownLabelClockMin.setText(Integer.toString(minutes));
-                  WindowContainer.countdownLabelClockSec.setText(Integer.toString(seconds));
-          }
+                    if (seconds <= 0) {
+                        minutes--;
+                        seconds = 60;
+                    }
+                  
+                    System.out.println(minutes + ":" + seconds + "min");
+                    seconds--;
+                    WindowContainer.countdownLabelClockMin.setText(Integer.toString(minutes));
+                    WindowContainer.countdownLabelClockSec.setText(Integer.toString(seconds));
+                }
+                // game over..
+                else {
+                    mainCountDown.stop();
+                    WindowContainer.countdownLabelClockMin.setText("0");
+                    WindowContainer.countdownLabelClockSec.setText("0");
+                    Color darkRed = new Color(178,34,34);
+                    WindowContainer.errorHandlingLabel.setForeground(darkRed);
+                    WindowContainer.errorHandlingLabel.setText("Thank you! Your speech time is over.");
+
+                    // let the message blink
+                    errorLabelTimer = new Timer(20000, null);
+                    errorLabelTimer.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                             WindowContainer.errorHandlingLabel.setText("");
+                             errorLabelTimer.stop();
+                        }
+                    });
+                    errorLabelTimer.start();
+                }
+            }
        });
     }
 

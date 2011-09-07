@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 
 public class AboutDialog extends JDialog {
 
-    private JTextField statement;
     private JLabel line0;
     private JLabel line1;
     private JLabel line2;
@@ -25,12 +24,6 @@ public class AboutDialog extends JDialog {
     b.add(line0);
     b.add(line1);
     b.add(line2);
-    statement = new JTextField("Support the development and send Bitcoins to 18QeVng1ArbTBoyFTXGwk78caQgDESUC4v");
-    statement.setEditable(false);
-    statement.setBorder(null);
-    statement.setForeground(UIManager.getColor("Label.foreground"));
-    statement.setFont(UIManager.getFont("Label.font"));
-    b.add(statement);
     line3 = new JLabel("\t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t CC-BY-SA Stephan Kristyn / Monks GmbH 2011");
     b.add(line3);
 
