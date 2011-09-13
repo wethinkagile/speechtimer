@@ -50,17 +50,30 @@ import java.awt.*;
        private Timer errorLabelTimer2;
        private boolean labelFadeTimer2 = false;
        
-           // set timer error handling label timer RIGHT
+       // set timer error handling label timer RIGHT
        private Timer errorLabelTimer3;
        private boolean labelFadeTimer3 = false;
 
-
+       static String fileEncoding = "ISO-8859-1";
        // constructor
        public ButtonPressed (String clickedItem, JPanel parent) {
            this.clickedItem = clickedItem;
            this.parent = parent;
        }
 
+       static void switchEncoding() {
+           if (fileEncoding == "ISO-8859-1"){
+                fileEncoding = "UTF-8";
+           }
+           else {
+               fileEncoding = "ISO-8859-1";
+           }
+       }
+       
+       static String getEncoding() {
+           return fileEncoding;
+       }
+       
        public void actionPerformed (ActionEvent e) {
             if (clickedItem.equals("start")){
                 // error handling
@@ -481,7 +494,7 @@ import java.awt.*;
                         FileInputStream fstream =
                         new FileInputStream(pathAndFile);
                         DataInputStream in = new DataInputStream(fstream);
-                        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                        BufferedReader br = new BufferedReader(new InputStreamReader(in, fileEncoding));
                         String strLine;
 
                         while ((strLine = br.readLine()) != null)   {

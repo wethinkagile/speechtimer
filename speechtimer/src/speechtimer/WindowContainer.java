@@ -20,6 +20,7 @@ public class WindowContainer extends JFrame {
     private JMenuBar bar;
     private JMenu fileMenu;
     private JMenuItem aboutMenu;
+    private JMenuItem switchEncodingMenu;
     private JMenuItem exitMenu;
 
     // vars for countdown
@@ -87,12 +88,15 @@ public class WindowContainer extends JFrame {
         setJMenuBar(bar);
         fileMenu = new JMenu("File");
         aboutMenu = new JMenuItem("About");
+        switchEncodingMenu = new JMenuItem("Switch Encoding");
         exitMenu = new JMenuItem("Exit");
         bar.add(fileMenu);
         fileMenu.add(aboutMenu);
+        fileMenu.add(switchEncodingMenu);
         fileMenu.add(exitMenu);
         exitMenu.addActionListener(new MenuSelection(1));
         aboutMenu.addActionListener(new MenuSelection(2));
+        switchEncodingMenu.addActionListener(new MenuSelection(3));
         
         // Timer Clock
         // Minutes

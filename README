@@ -11,8 +11,10 @@ I wrote this tool for monks.de to manage speak times of participants of medical 
 
 ==RUN==
 
-Run with
+On any Platform type in:
 "java -jar speechtimer.jar"
+
+On Windows 7 you can just doubleclick speechtimer.jar
 
 ==TROUBLESHOOTING==
 
@@ -21,13 +23,17 @@ I am not responsible for problems that result from the usage of this program.
 
 ==CHANGES IN THIS VERSION ==
 
+Version 1.0
 - Implemented dynamic Timings via UI, for single or all speakers
 - Fix of last item persistence in speaker arraylist
 - Add and remove Speaker via Gui
 - Error handling and user feedback
 - Hide or Show Clock to not intimidate speakers
 
-Upcoming in Version 1.1
+Version 1.1
+- Added UTF-8 and Windows/ANSI/ISO-8859-1 support for German Umlaute
+
+Upcoming in Version 1.2
 - Better looking Interace
 - Sound Feedback
 

@@ -15,6 +15,8 @@ import javax.swing.JFrame;
 public class MenuSelection implements ActionListener {
    
    private int menuItem;
+   private JDialog a;
+   private JDialog s;
    
    public MenuSelection (int menuItem) {
        this.menuItem = menuItem;
@@ -28,9 +30,15 @@ public class MenuSelection implements ActionListener {
         }
         
         else if (menuItem == 2) {
-            JDialog f = new AboutDialog(new JFrame());
-            f.show();
+            a = new AboutDialog(new JFrame());
+            a.show();
+        }
+        
+        else if (menuItem == 3) {
+            // switch encoding
+            ButtonPressed.switchEncoding();
+            s = new EncodingDialog(new JFrame());
+            s.show();
         }
     }
-   
 }
